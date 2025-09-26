@@ -18,20 +18,19 @@ import {
   ColorPicker,
   ColorPickerAlpha,
   ColorPickerEyeDropper,
-  ColorPickerFormat,
   ColorPickerHue,
-  ColorPickerOutput,
   ColorPickerSelection,
 } from "@/components/ui/shadcn-io/color-picker";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useRef, useState } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
+import { Circle, Eraser, LineSquiggle, PencilLine } from "lucide-react";
 
 export default function DrawingCanvas() {
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
   const [eraseMode, setEraseMode] = useState(false);
-  const [strokeWidth, setStrokeWidth] = useState(1);
-  const [eraserWidth, setEraserWidth] = useState(1);
+  const [strokeWidth, setStrokeWidth] = useState(4);
+  const [eraserWidth, setEraserWidth] = useState(4);
   const [strokeColor, setStrokeColor] = useState("#000000");
   function handleStrokeClick() {
     setEraseMode(false);
@@ -55,6 +54,21 @@ export default function DrawingCanvas() {
     const color = new Color(value);
     setStrokeColor(color.hex());
   }
+
+  function getSizeIconSize(size: number) {
+    switch (size) {
+      case 1:
+        return "size-[8px]";
+      case 2:
+        return "size-[12px]";
+      case 3:
+        return "size-[16px]";
+      case 4:
+        return "size-[20px]";
+      case 5:
+        return "size-[24px]";
+    }
+  }
   return (
     <>
       <ReactSketchCanvas
@@ -64,45 +78,101 @@ export default function DrawingCanvas() {
         strokeColor={strokeColor}
       ></ReactSketchCanvas>
       <div className="absolute bottom-0 p-8">
-        <Menubar className="h-16">
+        <Menubar className="py-18">
           <MenubarMenu>
             <ToggleGroup type="single" size={"lg"} defaultValue="0">
-              <ToggleGroupItem value={"0"} onClick={handleStrokeClick}>
-                Caneta
+              <ToggleGroupItem
+                className="py-16 px-8"
+                value={"0"}
+                onClick={handleStrokeClick}
+              >
+                <PencilLine className="size-12" strokeWidth={1.5}></PencilLine>
               </ToggleGroupItem>
-              <ToggleGroupItem value={"1"} onClick={handleEraserClick}>
-                Borracha
+              <ToggleGroupItem
+                className="py-16 px-8"
+                value={"1"}
+                onClick={handleEraserClick}
+              >
+                <Eraser className="size-12" strokeWidth={1.5}></Eraser>
               </ToggleGroupItem>
             </ToggleGroup>
+
             {eraseMode ? (
-              <Select onValueChange={handleEraserWidthChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Borracha 1"></SelectValue>
+              <Select
+                onValueChange={handleEraserWidthChange}
+                value={(eraserWidth / 4).toString()}
+              >
+                <SelectTrigger className="py-16 px-8 border-0">
+                  <SelectValue
+                    placeholder={
+                      <Circle
+                        className="size-2"
+                        strokeWidth={1.5}
+                        fill={"gray"}
+                      ></Circle>
+                    }
+                  ></SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {[1, 2, 3, 4, 5].map((item, index) => (
-                    <SelectItem key={`eraser-${index}`} value={item.toString()}>
-                      Borracha {item}
-                    </SelectItem>
-                  ))}
+                  {[1, 2, 3, 4, 5].map((item, index) => {
+                    return (
+                      <SelectItem
+                        className="py-8 px-8 border-0"
+                        key={`item-${index}`}
+                        value={item.toString()}
+                      >
+                        <Circle className={getSizeIconSize(item)}></Circle>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             ) : (
-              <Select onValueChange={handleStrokeWidthChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Lápis 1"></SelectValue>
+              <Select
+                onValueChange={handleStrokeWidthChange}
+                value={(strokeWidth / 4).toString()}
+              >
+                <SelectTrigger className="py-16 px-8 border-0">
+                  <SelectValue
+                    placeholder={
+                      <Circle
+                        className="size-2"
+                        strokeWidth={1.5}
+                        fill={"gray"}
+                      ></Circle>
+                    }
+                  ></SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {[1, 2, 3, 4, 5].map((item, index) => (
-                    <SelectItem key={`stroke-${index}`} value={item.toString()}>
-                      Lápis {item}
-                    </SelectItem>
-                  ))}
+                  {[1, 2, 3, 4, 5].map((item, index) => {
+                    return (
+                      <SelectItem
+                        className="py-8 px-8 border-0"
+                        key={`item-${index}`}
+                        value={item.toString()}
+                      >
+                        <Circle
+                          className={getSizeIconSize(item)}
+                          fill="gray"
+                        ></Circle>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             )}
-            <MenubarTrigger>Color</MenubarTrigger>
-            <MenubarContent className="h-[400px]">
+
+            <MenubarTrigger
+              className={`px-8 py-10 ${eraseMode ? "opacity-20" : ""}`}
+              disabled={eraseMode}
+            >
+              <LineSquiggle
+                className="size-12"
+                color={strokeColor}
+                strokeWidth={1.5}
+              ></LineSquiggle>
+            </MenubarTrigger>
+            <MenubarContent className="h-[400px] w-[360px]">
               <ColorPicker
                 className="max-w-sm rounded-md border bg-background p-4 shadow-sm"
                 onChange={(e) => handleColorChange(e)}
@@ -115,10 +185,10 @@ export default function DrawingCanvas() {
                     <ColorPickerAlpha />
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <ColorPickerOutput />
                   <ColorPickerFormat />
-                </div>
+                </div> */}
               </ColorPicker>
             </MenubarContent>
           </MenubarMenu>
