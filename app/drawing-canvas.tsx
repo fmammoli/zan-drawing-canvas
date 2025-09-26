@@ -162,7 +162,10 @@ export default function DrawingCanvas() {
                     <AlertDialogFooter>
                       {(uploadState === "success" ||
                         uploadState === "error") && (
-                        <AlertDialogAction className="bg-purple-400">
+                        <AlertDialogAction
+                          className="bg-purple-400"
+                          onClick={() => setUploadState("loading")}
+                        >
                           Continuar Desenhando!
                         </AlertDialogAction>
                       )}
