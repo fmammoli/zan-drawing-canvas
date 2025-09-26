@@ -34,13 +34,25 @@ import {
   LineSquiggle,
   PencilLine,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function DrawingCanvas() {
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
   const [eraseMode, setEraseMode] = useState(false);
   const [strokeWidth, setStrokeWidth] = useState(4);
-  const [eraserWidth, setEraserWidth] = useState(4);
+  const [eraserWidth, setEraserWidth] = useState(8);
   const [strokeColor, setStrokeColor] = useState("#000000");
+
+  const [uploadState, setUploadState] = useState("loading");
 
   function handleStrokeClick() {
     setEraseMode(false);
@@ -100,9 +112,11 @@ export default function DrawingCanvas() {
       const result = await res.json();
       // Optionally show a success message or handle result
       console.log("Upload success:", result);
+      setUploadState("success");
     } else {
       // Optionally handle error
       console.error("Upload failed");
+      setUploadState("error");
     }
   }
 
@@ -126,11 +140,43 @@ export default function DrawingCanvas() {
               <EllipsisVertical></EllipsisVertical>
             </MenubarTrigger>
             <MenubarContent>
-              <MenubarItem onClick={handleSave}>
-                <ImageUp className="size-10"></ImageUp>Salvar
-              </MenubarItem>
-              <MenubarItem onClick={handleReset}>
-                <BrushCleaning className="size-10"></BrushCleaning>Limpar
+              <div>
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    onClick={handleSave}
+                    className="flex items-center gap-2 p-2 hover:bg-gray-100 w-full rounded-md text-gray-500"
+                  >
+                    <ImageUp className="size-10" strokeWidth={1.5}></ImageUp>
+                    <span className="text-black">Salvar</span>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        {uploadState === "loading" && "Salvando desenho..."}
+                        {uploadState === "success" && "Seu desenho foi salvo!"}
+                        {uploadState === "error" && "Erro"}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {uploadState === "error" &&
+                          "Erro ao tentar salvar senho desenho, tente novamente."}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      {uploadState === "success" && (
+                        <AlertDialogAction className="bg-purple-400">
+                          Continuar Desenhando!
+                        </AlertDialogAction>
+                      )}
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+              <MenubarItem onClick={handleReset} className="text-gray-800">
+                <BrushCleaning
+                  className="size-10"
+                  strokeWidth={1.5}
+                ></BrushCleaning>
+                Limpar
               </MenubarItem>
             </MenubarContent>
           </MenubarMenu>
@@ -231,17 +277,22 @@ export default function DrawingCanvas() {
                 strokeWidth={1.5}
               ></LineSquiggle>
             </MenubarTrigger>
-            <MenubarContent className="h-[400px] w-[360px]">
+            <MenubarContent
+              className="h-[400px] w-[360px]"
+              onTouchMove={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+              }}
+            >
               <ColorPicker
                 className="max-w-sm rounded-md border bg-background p-4 shadow-sm"
                 onChange={(e) => handleColorChange(e)}
               >
-                <ColorPickerSelection />
+                <ColorPickerSelection className="touch-none" />
+
                 <div className="flex items-center gap-4">
-                  <ColorPickerEyeDropper />
                   <div className="grid w-full gap-1">
                     <ColorPickerHue />
-                    <ColorPickerAlpha />
                   </div>
                 </div>
                 {/* <div className="flex items-center gap-2">
