@@ -17,8 +17,6 @@ import {
 } from "@/components/ui/select";
 import {
   ColorPicker,
-  ColorPickerAlpha,
-  ColorPickerEyeDropper,
   ColorPickerHue,
   ColorPickerSelection,
 } from "@/components/ui/shadcn-io/color-picker";

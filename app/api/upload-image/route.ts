@@ -4,7 +4,7 @@ import fs from "fs/promises";
 
 export async function POST(req: NextRequest) {
   try {
-    const { dataUrl, createdAt, fileType } = await req.json();
+    const { dataUrl, createdAt } = await req.json();
 
     const base64Data = dataUrl.split(",")[1];
     if (!base64Data) {
