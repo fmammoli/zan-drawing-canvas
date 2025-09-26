@@ -160,7 +160,8 @@ export default function DrawingCanvas() {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      {uploadState === "success" && (
+                      {(uploadState === "success" ||
+                        uploadState === "error") && (
                         <AlertDialogAction className="bg-purple-400">
                           Continuar Desenhando!
                         </AlertDialogAction>
