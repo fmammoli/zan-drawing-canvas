@@ -1,6 +1,42 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Set up do projeto
+
+Primeiramente, veja se você tem o Node instalado, se não tiver, instale.
+
+Depois de clonar ou baixar o projeto no seu computador, navegue até a pasta raiz do projeto no terminal (a pasta onde contém o README.md) e instale as dependências do projeto com o comando:
+
+```bash
+npm install
+```
+
+Em segue crie uma build de produção através do comando:
+
+```bash
+npm run build
+```
+
+Para rodar a build de produção execute o comando:
+
+```bash
+npm run start
+```
+
+No terminal, você verá o ip e a porta onde a aplicação estará rodando, você pode acessar ela pelo `http://localhost:3000` ou através da rede pelo ip e porta descritos no terminal.
+
+Para acessar o Painel de Desenho pelos tables, os tables e o computar rodando o projeto devem estar na mesma rede. Em seguida, acessa o ip e porta da seção `Network:` através do chrome nos tables.
+
+Quando o usuário do tablet clicar em `Salvar`, o desenho será salvo no computador rodando o projeto na pasta `zan-drawing-canvas/public/uploads`.
+
+\*\*\* Você pode também rodar o projeto no modo desenvolvedor usando o comando:
+
+```bash
+npm run dev
+```
+
+#### This are the nextjs instructions
+
+### Getting Started
 
 First, run the development server:
 
