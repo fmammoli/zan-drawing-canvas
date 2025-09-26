@@ -24,7 +24,7 @@ npm run start
 
 No terminal, você verá o ip e a porta onde a aplicação estará rodando, você pode acessar ela pelo `http://localhost:3000` ou através da rede pelo ip e porta descritos no terminal.
 
-Para acessar o Painel de Desenho pelos tables, os tables e o computar rodando o projeto devem estar na mesma rede. Em seguida, acessa o ip e porta da seção `Network:` através do chrome nos tables.
+Para acessar o Painel de Desenho pelos tables, os tablets e o computador rodando o projeto devem estar na mesma rede. Em seguida, acessa o ip e porta da seção `Network:` através do chrome nos tables.
 
 Quando o usuário do tablet clicar em `Salvar`, o desenho será salvo no computador rodando o projeto na pasta `zan-drawing-canvas/public/uploads`.
 
