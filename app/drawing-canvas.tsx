@@ -4,6 +4,7 @@ import Color, { ColorLike } from "color";
 import {
   Menubar,
   MenubarContent,
+  MenubarItem,
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
@@ -24,7 +25,15 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useRef, useState } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
-import { Circle, Eraser, LineSquiggle, PencilLine } from "lucide-react";
+import {
+  BrushCleaning,
+  Circle,
+  EllipsisVertical,
+  Eraser,
+  ImageUp,
+  LineSquiggle,
+  PencilLine,
+} from "lucide-react";
 
 export default function DrawingCanvas() {
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
@@ -32,6 +41,7 @@ export default function DrawingCanvas() {
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [eraserWidth, setEraserWidth] = useState(4);
   const [strokeColor, setStrokeColor] = useState("#000000");
+
   function handleStrokeClick() {
     setEraseMode(false);
     canvasRef.current?.eraseMode(false);
@@ -69,6 +79,37 @@ export default function DrawingCanvas() {
         return "size-[24px]";
     }
   }
+
+  async function handleSave() {
+    const dataUrl = await canvasRef.current?.exportImage("png");
+    if (!dataUrl) return;
+
+    const payload = {
+      dataUrl,
+      createdAt: new Date().toISOString(),
+      fileType: "image/png",
+    };
+
+    const res = await fetch("/api/upload-image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      const result = await res.json();
+      // Optionally show a success message or handle result
+      console.log("Upload success:", result);
+    } else {
+      // Optionally handle error
+      console.error("Upload failed");
+    }
+  }
+
+  function handleReset() {
+    canvasRef.current?.resetCanvas();
+  }
+
   return (
     <>
       <ReactSketchCanvas
@@ -76,7 +117,25 @@ export default function DrawingCanvas() {
         strokeWidth={strokeWidth}
         eraserWidth={eraserWidth}
         strokeColor={strokeColor}
+        canvasColor="transparent"
       ></ReactSketchCanvas>
+      <div className="absolute top-0 right-0 p-8">
+        <Menubar className="py-8">
+          <MenubarMenu>
+            <MenubarTrigger className="p-4">
+              <EllipsisVertical></EllipsisVertical>
+            </MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem onClick={handleSave}>
+                <ImageUp className="size-10"></ImageUp>Salvar
+              </MenubarItem>
+              <MenubarItem onClick={handleReset}>
+                <BrushCleaning className="size-10"></BrushCleaning>Limpar
+              </MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
+      </div>
       <div className="absolute bottom-0 p-8">
         <Menubar className="py-18">
           <MenubarMenu>
