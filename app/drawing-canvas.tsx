@@ -21,13 +21,14 @@ import {
   ColorPickerSelection,
 } from "@/components/ui/shadcn-io/color-picker";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ReactSketchCanvas, ReactSketchCanvasRef } from "react-sketch-canvas";
 import {
   BrushCleaning,
   Circle,
   EllipsisVertical,
   Eraser,
+  Fullscreen,
   ImageUp,
   LineSquiggle,
   PencilLine,
@@ -122,17 +123,52 @@ export default function DrawingCanvas() {
     canvasRef.current?.resetCanvas();
   }
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleFullscreenChange(e: Event) {
+      if (document.fullscreenEnabled) {
+        setIsFullscreen(false);
+      } else {
+        setIsFullscreen(true);
+      }
+    }
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {};
+  }, [setIsFullscreen]);
+
+  async function handleFullscreen() {
+    if (containerRef.current) {
+      if (isFullscreen === false) {
+        await document.body.requestFullscreen();
+
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+
+        setIsFullscreen(false);
+      }
+    }
+  }
+
   return (
-    <>
+    <div
+      className="flex items-center justify-center h-dvh overflow-hidden"
+      ref={containerRef}
+    >
       <ReactSketchCanvas
         ref={canvasRef}
         strokeWidth={strokeWidth}
         eraserWidth={eraserWidth}
         strokeColor={strokeColor}
         canvasColor="transparent"
+        width={"1024px"}
+        height={"768px"}
+        className="touch-none overflow-hidden"
       ></ReactSketchCanvas>
       <div className="absolute top-0 right-0 p-8">
-        <Menubar className="py-8">
+        <Menubar className="py-8 z-10">
           <MenubarMenu>
             <MenubarTrigger className="p-4">
               <EllipsisVertical></EllipsisVertical>
@@ -180,6 +216,10 @@ export default function DrawingCanvas() {
                 ></BrushCleaning>
                 Limpar
               </MenubarItem>
+              {/* <MenubarItem onClick={handleFullscreen} className="text-gray-800">
+                <Fullscreen className="size-10" strokeWidth={1.5}></Fullscreen>
+                {isFullscreen ? "Desativar Tela Cheia" : "Ativar tela cheia"}
+              </MenubarItem> */}
             </MenubarContent>
           </MenubarMenu>
         </Menubar>
@@ -306,6 +346,6 @@ export default function DrawingCanvas() {
           </MenubarMenu>
         </Menubar>
       </div>
-    </>
+    </div>
   );
 }

@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     const date = new Date(createdAt);
     const formattedDate = date.toISOString().replace(/[-:T]/g, "").slice(0, 15); // "20250926 153045"
-    const fileName = `${formattedDate}.png`;
+    const fileName = `${formattedDate}png`;
     const filePath = path.join(uploadDir, fileName);
 
     // Write the buffer to a file
